@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 import logging
-from solver import solve_equation
-from plotter import plot_2d, plot_3d
+import os
 
+# Configuração de logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -15,6 +15,9 @@ def home():
 
 @app.route('/solve', methods=['POST'])
 def solve():
+    from solver import solve_equation  # Importação sob demanda
+    from plotter import plot_2d, plot_3d  # Importação sob demanda
+    
     logger.info("Recebendo requisição para /solve")
     data = request.json
     problem = data.get('problem', '')
@@ -55,5 +58,6 @@ def solve():
     })
 
 if __name__ == '__main__':
-    logger.info("Iniciando o servidor Flask")
-    app.run(host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 5000))  # Usa a porta da Render ou 5000 localmente
+    logger.info(f"Iniciando o servidor Flask na porta {port}")
+    app.run(host='0.0.0.0', port=port)
